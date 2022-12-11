@@ -1,0 +1,19 @@
+version: '{build}'
+pull_requests:
+  do_not_increment_build_number: true
+image: Visual Studio 2022
+configuration:
+- Debug
+- Release
+platform: Any CPU
+build:
+  parallel: true
+  verbosity: minimal
+before_build:
+- pwsh: 'Get-ChildItem -Recurse -Include *.csproj | % { [xml]$xml = Get-Content $_; $xml.SelectNodes("/Project/PropertyGroup/FileVersion") | % { $_."#text" += ".${Env:APPVEYOR_BUILD_NUMBER}" }; $xml.SelectNodes("/Project/PropertyGroup/InformationalVersion") | % { $_."#text" += "+${Env:APPVEYOR_REPO_COMMIT}" }; $xml.Save($_) }'
+- pwsh: dotnet restore -v quiet
+after_build:
+- pwsh: 'Compress-Archive -Path LICENSE.txt,.\CbzToKf8\bin\*\*\* -DestinationPath cbz-to-kf8.zip -CompressionLevel Optimal'
+artifacts:
+- path: 'cbz-to-kf8.zip'
+  name: cbz-to-kf8

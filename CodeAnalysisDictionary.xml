@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Dictionary>
+  <Words>
+    <Recognized>
+      <Word>args</Word>
+      <Word>ASIN</Word>
+      <Word>CBZ</Word>
+      <Word>CDIC</Word>
+      <Word>CDICs</Word>
+      <Word>datas</Word>
+      <Word>DATP</Word>
+      <Word>DATPs</Word>
+      <Word>decompressor</Word>
+      <Word>dic</Word>
+      <Word>DRM</Word>
+      <Word>endian</Word>
+      <Word>EXTH</Word>
+      <Word>FCIS</Word>
+      <Word>FDST</Word>
+      <Word>FLIS</Word>
+      <Word>IDXT</Word>
+      <Word>INDX</Word>
+      <Word>INDXs</Word>
+      <Word>infos</Word>
+      <Word>KF</Word><!-- KF8 -->
+      <Word>LIGT</Word>
+      <Word>LTR</Word>
+      <Word>LUT</Word>
+      <Word>metaentries</Word>
+      <Word>metaentry</Word>
+      <Word>MOBI</Word>
+      <Word>Mobipocket</Word>
+      <Word>multibyte</Word>
+      <Word>NCX</Word>
+      <Word>ORDT</Word>
+      <Word>PDB</Word>
+      <Word>PDOC</Word>
+      <Word>RESC</Word>
+      <Word>RNG</Word>
+      <Word>RTL</Word>
+      <Word>SRCS</Word>
+      <Word>TAGX</Word>
+      <Word>uncrossable</Word>
+      <Word>unencrypted</Word>
+      <Word>UTF</Word>
+    </Recognized>
+  </Words>
+</Dictionary>

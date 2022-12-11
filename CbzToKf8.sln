@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32519.379
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{530EF7A4-975E-49C5-9C4C-FD7D92A483CA}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CbzToKf8", "CbzToKf8\CbzToKf8.csproj", "{50C43F7B-7406-4F6D-B98F-311E77728497}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobiDump", "MobiDump\MobiDump.csproj", "{473E78CD-7C49-4A18-B969-C9F9F29030AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50C43F7B-7406-4F6D-B98F-311E77728497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50C43F7B-7406-4F6D-B98F-311E77728497}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50C43F7B-7406-4F6D-B98F-311E77728497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50C43F7B-7406-4F6D-B98F-311E77728497}.Release|Any CPU.Build.0 = Release|Any CPU
+		{473E78CD-7C49-4A18-B969-C9F9F29030AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{473E78CD-7C49-4A18-B969-C9F9F29030AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{473E78CD-7C49-4A18-B969-C9F9F29030AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{473E78CD-7C49-4A18-B969-C9F9F29030AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AF8FA9C0-A6AA-426C-9E4F-B98D45EF01DB}
+	EndGlobalSection
+EndGlobal
