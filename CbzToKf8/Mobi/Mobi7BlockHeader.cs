@@ -9,7 +9,7 @@
 
 namespace CbzToKf8.Mobi
 {
-    internal struct Mobi6BlockHeader
+    internal struct Mobi7BlockHeader
     {
         public const uint MobiMagicValue = 0x4D4F4249;  // "MOBI"
 

@@ -21,7 +21,7 @@ namespace CbzToKf8.Mobi
         Asin = 113,                         // string (ASIN)
         Sample = 115,                       // (ex. 0x00000000)
         StartReadingLocation = 116,         // (ex. 0xFFFFFFFF)
-        KF8BoundaryRecordIndex = 121,       // (ex. 0x000000EB)
+        Mobi8RecordIndex = 121,             // (ex. 0x000000EB)
         FixedLayout = 122,                  // string (ex. "true")
         BookType = 123,                     // string (ex. "comic")
         OrientationLock = 124,              // string (ex. "none", "landscape", portrait")

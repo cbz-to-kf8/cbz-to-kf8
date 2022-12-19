@@ -13,11 +13,11 @@ using System.Text;
 
 namespace CbzToKf8.Mobi
 {
-    internal sealed class Mobi6Record
+    internal sealed class Mobi7Record
     {
         public PdocHeader Pdoc;
 
-        public Mobi6BlockHeader Mobi;
+        public Mobi7BlockHeader Mobi;
 
         public ExthBlock Exth;
 
@@ -49,7 +49,7 @@ namespace CbzToKf8.Mobi
                     throw new InvalidDataException("Mismatched MOBI magic number.");
                 if (Mobi.HeaderLength < 8)
                     throw new InvalidDataException("Invalid MOBI length.");
-                if (Mobi.HeaderLength < 228)
+                if (Mobi.HeaderLength < 24)
                     throw new InvalidDataException("Unexpected MOBI length.");
 
                 Mobi.BookType = (MobiBookType)reader.ReadUInt32();
@@ -57,8 +57,13 @@ namespace CbzToKf8.Mobi
                 Mobi.RandomId = reader.ReadUInt32();
                 Mobi.FormatVersion = reader.ReadUInt32();
 
-                if (Mobi.FormatVersion != 6)
-                    throw new InvalidDataException("Unexpected MOBI format version.");
+                if (Mobi.FormatVersion < 2)
+                    throw new InvalidDataException("Unexpected MOBI version.");
+
+                if (Mobi.FormatVersion < 3)
+                    goto end;
+                if (Mobi.HeaderLength < 116)
+                    throw new InvalidDataException("Invalid MOBI length.");
 
                 Mobi.Unknown0028 = reader.ReadUInt32();
                 Mobi.Unknown002C = reader.ReadUInt32();
@@ -83,6 +88,12 @@ namespace CbzToKf8.Mobi
                 Mobi.HuffDicDirectAccessRecordsIndex = reader.ReadUInt32();
                 Mobi.HuffDicDirectAccessRecordsCount = reader.ReadUInt32();
                 Mobi.Flags = (MobiFlags)reader.ReadUInt32();  // 0080
+
+                if (Mobi.FormatVersion < 4)
+                    goto end;
+                if (Mobi.HeaderLength < 208)
+                    throw new InvalidDataException("Invalid MOBI length.");
+
                 Mobi.Unknown0084 = reader.ReadUInt32();
                 Mobi.Unknown0088 = reader.ReadUInt32();
                 Mobi.Unknown008C = reader.ReadUInt32();
@@ -107,12 +118,24 @@ namespace CbzToKf8.Mobi
                 Mobi.FlisRecordsCount = reader.ReadUInt32();
                 Mobi.Unknown00D8 = reader.ReadUInt32();
                 Mobi.Unknown00DC = reader.ReadUInt32();
+
+                if (Mobi.FormatVersion < 6)
+                    goto end;
+                if (Mobi.HeaderLength < 228)
+                    throw new InvalidDataException("Invalid MOBI length.");
+
                 Mobi.Unknown00E0 = reader.ReadUInt32();  // 00E0
                 Mobi.Unknown00E4 = reader.ReadUInt32();
                 Mobi.Unknown00E8 = reader.ReadUInt32();
                 Mobi.Unknown00EC = reader.ReadUInt32();
                 Mobi.Unknown00F0 = reader.ReadUInt32();  // 00F0
 
+                if (Mobi.HeaderLength < 232)
+                    goto end;
+
+                Mobi.NcxRecordsIndex = reader.ReadUInt32();
+
+            end:
                 Mobi.TrailingData = reader.ReadBytes((int)(16 + Mobi.HeaderLength - stream.Position));
             }
 

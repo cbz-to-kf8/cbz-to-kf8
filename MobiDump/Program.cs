@@ -23,6 +23,8 @@ namespace CbzToKf8.Mobi.Dump
 
         private const ulong _boundary8CC = 0x424F554E44415259;
 
+        private const uint _endOfRecords4CC = 0xE98E0D0A;
+
         /// <exception cref="IOException"/>
         internal static int Main(string[] args)
         {
@@ -97,67 +99,96 @@ namespace CbzToKf8.Mobi.Dump
 
                 var recordUsed = new BitArray(records.Count);
 
-                Mobi6Record? mobi6 = null;
-                uint mobi6RecordIndex = uint.MaxValue;
+                Mobi7Record? mobi7 = null;
+                uint mobi7RecordIndex = uint.MaxValue;
                 Mobi8Record? mobi8 = null;
                 uint mobi8RecordIndex = uint.MaxValue;
 
-                for (uint recordIndex = 0; recordIndex < records.Count - 1;)
+                uint mobiVersion;
+                using (var recordStream = records[0].OpenData(FileAccess.Read))
+                    mobiVersion = MobiRecord.ReadVersion(recordStream);
+
+                if (mobiVersion < 8)
                 {
-                    uint mobiVersion;
-                    using (var recordStream = records[(int)recordIndex].OpenData(FileAccess.Read))
-                        mobiVersion = MobiRecord.ReadVersion(recordStream);
+                    mobi7RecordIndex = 0;
+                    SetRecordUsed(recordUsed, mobi7RecordIndex);
 
-                    if (mobiVersion == 6)
+                    mobi7 = new Mobi7Record();
+                    using (var recordStream = records[(int)mobi7RecordIndex].OpenData(FileAccess.Read))
+                        mobi7.ReadFrom(recordStream);
+
+                    var entry = Array.Find(mobi7.Exth.Entries, x => x.Tag == ExthTag.Mobi8RecordIndex);
+                    if (entry.Data != null && entry.Data.Length == 4)
                     {
-                        if (mobi6 != null)
-                            throw new InvalidDataException("Duplicate MOBI v6 record.");
+                        uint index = BinaryPrimitives.ReadUInt32BigEndian(entry.Data);
+                        if (index >= records.Count)
+                            throw new InvalidDataException($"Missing MOBI8 record {index}.");
 
-                        mobi6RecordIndex = recordIndex;
+                        if (index > 0)
+                        {
+                            uint boundaryIndex = index - 1;
 
-                        mobi6 = new Mobi6Record();
-                        using (var recordStream = records[(int)mobi6RecordIndex].OpenData(FileAccess.Read))
-                            mobi6.ReadFrom(recordStream);
-                    }
-                    else if (mobiVersion == 8)
-                    {
-                        if (mobi8 != null)
-                            throw new InvalidDataException("Duplicate MOBI v8 record.");
+                            var record = records[(int)boundaryIndex];
+                            if (record.DataLength == 8)
+                            {
+                                using (var recordStream = record.OpenData(FileAccess.Read))
+                                using (var recordReader = new BigEndianBinaryReader(recordStream))
+                                    if (recordReader.ReadUInt64() == _boundary8CC)
+                                        SetRecordUsed(recordUsed, boundaryIndex);
+                            }
+                        }
 
-                        mobi8RecordIndex = recordIndex;
+                        mobi8RecordIndex = index;
+                        SetRecordUsed(recordUsed, index);
 
                         mobi8 = new Mobi8Record();
                         using (var recordStream = records[(int)mobi8RecordIndex].OpenData(FileAccess.Read))
                             mobi8.ReadFrom(recordStream);
                     }
+                }
+                else
+                {
+                    mobi8RecordIndex = 0;
+                    SetRecordUsed(recordUsed, mobi8RecordIndex);
 
-                    SetRecordUsed(recordUsed, recordIndex);
-
-                    recordIndex += 1;
-
-                    while (recordIndex < records.Count - 1)
-                    {
-                        var record = records[(int)recordIndex];
-
-                        recordIndex += 1;
-
-                        if (record.DataLength != 8)
-                            continue;
-
-                        using (var recordStream = record.OpenData(FileAccess.Read))
-                        using (var recordReader = new BigEndianBinaryReader(recordStream))
-                        {
-                            if (recordReader.ReadUInt64() == _boundary8CC)
-                                break;
-                        }
-                    }
+                    mobi8 = new Mobi8Record();
+                    using (var recordStream = records[(int)mobi8RecordIndex].OpenData(FileAccess.Read))
+                        mobi8.ReadFrom(recordStream);
                 }
 
-                if (mobi6 != null)
-                    DumpMobi6(mobi6);
+                var flags = mobi8 != null
+                    ? mobi8.Mobi.Flags
+                    : mobi7!.Mobi.Flags;
+                if ((flags & MobiFlags.HasEndOfRecords) != 0)
+                {
+                    int index = records.Count - 1;
+
+                    var record = records[index];
+
+                    bool truncated = true;
+
+                    if (record.DataLength == 4)
+                    {
+                        using (var recordStream = record.OpenData(FileAccess.Read))
+                        using (var recordReader = new BigEndianBinaryReader(recordStream))
+                            truncated = recordReader.ReadUInt32() != _endOfRecords4CC;
+                    }
+
+                    if (truncated)
+                        throw new InvalidDataException($"File is truncated.");
+
+                    SetRecordUsed(recordUsed, (uint)index);
+                }
+
+                if (mobi7 != null)
+                {
+                    Console.WriteLine($"MOBI7:");
+                    DumpMobi7(mobi7);
+                }
 
                 if (mobi8 != null)
                 {
+                    Console.WriteLine($"MOBI8:");
                     DumpMobi8(mobi8);
 
                     HuffRecord? huff = null;
@@ -557,7 +588,7 @@ namespace CbzToKf8.Mobi.Dump
         }
 
         /// <exception cref="IOException"/>
-        private static void DumpMobi6(Mobi6Record mobi)
+        private static void DumpMobi7(Mobi7Record mobi)
         {
             Console.WriteLine($"{nameof(mobi.Pdoc.CompressionMethod)}:               0x{(ushort)mobi.Pdoc.CompressionMethod:X4} ({mobi.Pdoc.CompressionMethod})");
             Console.WriteLine($"{nameof(mobi.Pdoc.Unknown0002)}:                     0x{mobi.Pdoc.Unknown0002:X4}");
@@ -572,6 +603,8 @@ namespace CbzToKf8.Mobi.Dump
             Console.WriteLine($"{nameof(mobi.Mobi.TextEncoding)}:                    0x{(uint)mobi.Mobi.TextEncoding:X8} ({mobi.Mobi.TextEncoding})");
             Console.WriteLine($"{nameof(mobi.Mobi.RandomId)}:                        0x{mobi.Mobi.RandomId:X8}");
             Console.WriteLine($"{nameof(mobi.Mobi.FormatVersion)}:                   {mobi.Mobi.FormatVersion}");
+            if (mobi.Mobi.FormatVersion < 3)
+                goto end;
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown0028)}:                     0x{mobi.Mobi.Unknown0028:X8}");
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown002C)}:                     0x{mobi.Mobi.Unknown002C:X8}");
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown0030)}:                     0x{mobi.Mobi.Unknown0030:X8}");
@@ -595,6 +628,8 @@ namespace CbzToKf8.Mobi.Dump
             Console.WriteLine($"{nameof(mobi.Mobi.HuffDicDirectAccessRecordsIndex)}: {mobi.Mobi.HuffDicDirectAccessRecordsIndex}");
             Console.WriteLine($"{nameof(mobi.Mobi.HuffDicDirectAccessRecordsCount)}: {mobi.Mobi.HuffDicDirectAccessRecordsCount}");
             Console.WriteLine($"{nameof(mobi.Mobi.Flags)}:                           0x{(uint)mobi.Mobi.Flags:X8} ({mobi.Mobi.Flags})");
+            if (mobi.Mobi.FormatVersion < 4)
+                goto end;
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown0084)}:                     0x{mobi.Mobi.Unknown0084:X8}");
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown0088)}:                     0x{mobi.Mobi.Unknown0088:X8}");
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown008C)}:                     0x{mobi.Mobi.Unknown008C:X8}");
@@ -619,11 +654,17 @@ namespace CbzToKf8.Mobi.Dump
             Console.WriteLine($"{nameof(mobi.Mobi.FlisRecordsCount)}:                {mobi.Mobi.FlisRecordsCount}");
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown00D8)}:                     0x{mobi.Mobi.Unknown00D8:X8}");
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown00DC)}:                     0x{mobi.Mobi.Unknown00DC:X8}");
+            if (mobi.Mobi.FormatVersion < 6)
+                goto end;
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown00E0)}:                     0x{mobi.Mobi.Unknown00E0:X8}");
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown00E4)}:                     0x{mobi.Mobi.Unknown00E4:X8}");
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown00E8)}:                     0x{mobi.Mobi.Unknown00E8:X8}");
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown00EC)}:                     0x{mobi.Mobi.Unknown00EC:X8}");
             Console.WriteLine($"{nameof(mobi.Mobi.Unknown00F0)}:                     0x{mobi.Mobi.Unknown00F0:X8}");
+            if (mobi.Mobi.HeaderLength < 232)
+                goto end;
+            Console.WriteLine($"{nameof(mobi.Mobi.NcxRecordsIndex)}:                 {mobi.Mobi.NcxRecordsIndex}");
+        end:
             if (mobi.Mobi.TrailingData.Length > 0)
             {
                 Console.WriteLine($"{nameof(mobi.Mobi.TrailingData)}:");
