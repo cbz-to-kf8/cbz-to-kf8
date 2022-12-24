@@ -18,6 +18,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading;
+using System.Web;
 using Tetractic.CommandLine;
 using Tetractic.Formats.PalmPdb;
 
@@ -330,7 +331,7 @@ namespace CbzToKf8
                         string skeletonTopText =
                             $@"<?xml version=""1.0""?><!DOCTYPE html><html xmlns=""http://www.w3.org/1999/xhtml"" xmlns:epub=""http://www.idpf.org/2007/ops"">" +
                             $@"<head>" +
-                            $@"<title>{title}</title>" +
+                            $@"<title>{HttpUtility.HtmlEncode(title)}</title>" +
                             $@"<meta charset=""utf-8""/>" +
                             $@"</head>" +
                             $@"<body aid=""{Base32.Encode(aidBase)}"" style=""background-color:black;"">";
