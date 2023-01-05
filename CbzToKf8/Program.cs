@@ -502,7 +502,7 @@ namespace CbzToKf8
 
                 skeletonIndxBuilder.AddEntry("SKEL" + skeletonIndex.ToStringInvariant("D10"), new[]
                 {
-                    new IndxBuilder.Tag(1, new ulong[] { (ulong)skeletonEntry.Fragments.Count,(ulong)skeletonEntry.Fragments.Count }),
+                    new IndxBuilder.Tag(1, new ulong[] { (ulong)skeletonEntry.Fragments.Count, (ulong)skeletonEntry.Fragments.Count }),
                     new IndxBuilder.Tag(6, new ulong[] { skeletonEntry.TextIndex, skeletonEntry.TextLength, skeletonEntry.TextIndex, skeletonEntry.TextLength }),
                 });
             }
