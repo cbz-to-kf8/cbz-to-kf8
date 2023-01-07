@@ -12,7 +12,7 @@ using System;
 namespace CbzToKf8.Mobi
 {
     [Flags]
-    public enum MobiFlags : uint
+    internal enum MobiFlags : uint
     {
         None = 0,
         HasEndOfRecords = 0x10,

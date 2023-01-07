@@ -9,7 +9,7 @@
 
 namespace CbzToKf8.Mobi
 {
-    public enum MobiEncryptionMethod : ushort
+    internal enum MobiEncryptionMethod : ushort
     {
         /// <summary>
         /// No encryption.

@@ -12,7 +12,7 @@ using System;
 namespace CbzToKf8.Mobi
 {
     [Flags]
-    public enum MobiTextTrailers : uint
+    internal enum MobiTextTrailers : uint
     {
         None = 0,
         Multibyte = 0x1,

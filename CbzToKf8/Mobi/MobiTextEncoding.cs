@@ -9,7 +9,7 @@
 
 namespace CbzToKf8.Mobi
 {
-    public enum MobiTextEncoding : uint
+    internal enum MobiTextEncoding : uint
     {
         /// <summary>
         /// Windows code page 1252.

@@ -9,7 +9,7 @@
 
 namespace CbzToKf8.Mobi
 {
-    public enum MobiBookType : uint
+    internal enum MobiBookType : uint
     {
         Default = 2,
     }
