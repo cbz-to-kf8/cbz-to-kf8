@@ -13,6 +13,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -403,6 +404,12 @@ namespace CbzToKf8
 
                 byte[] textBuffer = text.GetBuffer();
 
+                byte[] compressedText = new byte[PalmDocCompressor.GetMaxCompressedSize(chunkTextLength)];
+
+#if DEBUG
+                byte[] decompressedText = new byte[chunkTextLength];
+#endif
+
                 for (uint offset = 0; offset < textLength; offset += chunkTextLength)
                 {
                     ushort length = (ushort)Math.Min(textLength - offset, chunkTextLength);
@@ -412,7 +419,14 @@ namespace CbzToKf8
                     var chunkRecord = new Record(stream);
                     records.Add(chunkRecord);
 
-                    stream.Write(textBuffer, (int)offset, length);
+                    int compressedTextLength = PalmDocCompressor.Compress(textBuffer.AsSpan((int)offset, length), compressedText);
+
+#if DEBUG
+                    int decompressedLength = PalmDocDecompressor.Decompress(compressedText.AsSpan(0, compressedTextLength), decompressedText);
+                    Debug.Assert(textBuffer.AsSpan((int)offset, length).SequenceEqual(decompressedText.AsSpan(0, decompressedLength)));
+#endif
+
+                    stream.Write(compressedText, 0, compressedTextLength);
 
                     // Write multibyte trailer.
                     byte multibyteCount = 0;
@@ -445,8 +459,8 @@ namespace CbzToKf8
 
             mobi8Builder.TextLength = textLength;
             mobi8Builder.TextRecordsCount = textRecordsCount;
-            mobi8Builder.TextRecordTextLength = 4096;
-            mobi8Builder.CompressionMethod = MobiCompressionMethod.Uncompressed;
+            mobi8Builder.TextRecordTextLength = chunkTextLength;
+            mobi8Builder.CompressionMethod = MobiCompressionMethod.PalmDoc;
 
             mobi8Builder.IndexRecordsIndex0028 = (uint)records.Count;
             mobi8Builder.IndexRecordsIndex0050 = (uint)records.Count;

@@ -279,7 +279,7 @@ namespace CbzToKf8.Mobi.Dump
                             }
                             case MobiCompressionMethod.PalmDoc:
                             {
-                                int decompressedLength = PalmDocDecompressor.Decompress(recordData, textLength, recordText);
+                                int decompressedLength = PalmDocDecompressor.Decompress(recordData.AsSpan(0, textLength), recordText);
                                 Array.Resize(ref recordText, decompressedLength);
                                 break;
                             }

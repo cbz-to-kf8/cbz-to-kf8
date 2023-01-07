@@ -19,7 +19,6 @@ namespace CbzToKf8.Mobi
         /// <summary>
         /// PalmDOC LZ77 and byte-pair compression.
         /// </summary>
-        // https://en.wikibooks.org/wiki/Data_Compression/Dictionary_compression#PalmDoc
         PalmDoc = 2,
 
         /// <summary>

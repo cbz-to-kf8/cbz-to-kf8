@@ -9,4 +9,5 @@
 
 using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("CbzToKf8.Tests")]
 [assembly: InternalsVisibleTo("MobiDump")]
