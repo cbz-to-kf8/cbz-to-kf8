@@ -236,6 +236,8 @@ namespace CbzToKf8
                     {
                         continue;
                     }
+                    if (imageInfo == null)
+                        continue;
 
                     if (imageInfo.Width > imageInfo.Height)
                     {
