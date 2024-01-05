@@ -219,7 +219,7 @@ namespace CbzToKf8
             zipArchive.Entries.CopyTo(zipEntries, 0);
             Array.Sort(zipEntries, ComparePaths);
 
-            foreach (var zipEntry in zipArchive.Entries)
+            foreach (var zipEntry in zipEntries)
             {
                 // Skip directories.
                 if (zipEntry.Name.Length == 0)
