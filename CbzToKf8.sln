@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CbzToKf8", "CbzToKf8\CbzToKf8.csproj", "{50C43F7B-7406-4F6D-B98F-311E77728497}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CbzToKf8.Tests", "CbzToKf8.Tests\CbzToKf8.Tests.csproj", "{F703C133-7A1E-4095-858F-9F79353032FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CbzToKf8.Tests", "CbzToKf8.Tests\CbzToKf8.Tests.csproj", "{F703C133-7A1E-4095-858F-9F79353032FF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobiDump", "MobiDump\MobiDump.csproj", "{473E78CD-7C49-4A18-B969-C9F9F29030AB}"
 EndProject
