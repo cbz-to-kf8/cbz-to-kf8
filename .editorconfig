@@ -217,6 +217,9 @@ dotnet_naming_rule.locals_rule.style = local_style
 # CA1303: Do not pass literals as localized parameters
 dotnet_diagnostic.CA1303.severity = none
 
+# CA1309: Use ordinal string comparison
+dotnet_diagnostic.CA1309.severity = suggestion
+
 [{*.csproj,*.xml}]
 indent_size = 2
 indent_style = space

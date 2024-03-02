@@ -35,8 +35,7 @@ namespace CbzToKf8.Mobi
         /// <exception cref="ArgumentOutOfRangeException"/>
         public FdstBuilder(uint entriesPerRecord)
         {
-            if (entriesPerRecord == 0)
-                throw new ArgumentOutOfRangeException(nameof(entriesPerRecord));
+            ArgumentOutOfRangeException.ThrowIfZero(entriesPerRecord);
 
             _entriesPerRecord = entriesPerRecord;
         }

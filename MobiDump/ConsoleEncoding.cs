@@ -19,8 +19,7 @@ namespace CbzToKf8.Mobi.Dump
         /// <exception cref="ArgumentNullException"/>
         public ConsoleEncoding(Encoding encoding)
         {
-            if (encoding is null)
-                throw new ArgumentNullException(nameof(encoding));
+            ArgumentNullException.ThrowIfNull(encoding);
 
             _encoding = encoding;
         }
@@ -89,7 +88,7 @@ namespace CbzToKf8.Mobi.Dump
 
         public override Encoder GetEncoder() => _encoding.GetEncoder();
 
-        public override byte[] GetPreamble() => Array.Empty<byte>();
+        public override byte[] GetPreamble() => [];
 
         public override int GetMaxByteCount(int charCount) => _encoding.GetMaxByteCount(charCount);
 

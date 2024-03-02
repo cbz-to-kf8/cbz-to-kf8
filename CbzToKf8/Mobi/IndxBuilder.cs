@@ -59,8 +59,7 @@ namespace CbzToKf8.Mobi
         /// <exception cref="ArgumentNullException"/>
         public IndxBuilder(TagxBlock.Entry[] tagxEntries)
         {
-            if (tagxEntries is null)
-                throw new ArgumentNullException(nameof(tagxEntries));
+            ArgumentNullException.ThrowIfNull(tagxEntries);
 
             _metaentryRecord = new MemoryStream();
 
@@ -122,10 +121,8 @@ namespace CbzToKf8.Mobi
         // ExceptionAdjustment: M:System.IO.StreamWriter.Write(System.String) -T:System.NotSupportedException
         public void AddEntry(string key, Tag[] tags)
         {
-            if (key is null)
-                throw new ArgumentNullException(nameof(key));
-            if (tags is null)
-                throw new ArgumentNullException(nameof(tags));
+            ArgumentNullException.ThrowIfNull(key);
+            ArgumentNullException.ThrowIfNull(tags);
 
             ThrowIfBuilt();
 
@@ -210,8 +207,7 @@ namespace CbzToKf8.Mobi
         // ExceptionAdjustment: M:System.IO.StreamWriter.Write(System.String) -T:System.NotSupportedException
         public uint AddString(string value)
         {
-            if (value is null)
-                throw new ArgumentNullException(nameof(value));
+            ArgumentNullException.ThrowIfNull(value);
 
             ThrowIfBuilt();
 
@@ -639,8 +635,7 @@ namespace CbzToKf8.Mobi
             /// <exception cref="ArgumentNullException"/>
             public Tag(byte tagId, ulong[] values)
             {
-                if (values is null)
-                    throw new ArgumentNullException(nameof(values));
+                ArgumentNullException.ThrowIfNull(values);
 
                 TagId = tagId;
                 Values = values;

@@ -22,6 +22,7 @@ using System.Threading;
 using System.Web;
 using Tetractic.CommandLine;
 using Tetractic.Formats.PalmPdb;
+using static System.FormattableString;
 
 namespace CbzToKf8
 {
@@ -32,7 +33,7 @@ namespace CbzToKf8
 
         private static readonly Encoding _encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
-        private static readonly char[] _pathSeparators = new[] { '/', '\\' };
+        private static readonly char[] _pathSeparators = ['/', '\\'];
 
         private static readonly SortedList<string, DeviceInfo> _deviceInfos = new()
         {
@@ -191,7 +192,7 @@ namespace CbzToKf8
 
         private static bool TryParseDimensions(string text, out (int X, int Y) value)
         {
-            string[] dimensions = text.Split(new[] { 'x' }, 2);
+            string[] dimensions = text.Split(['x'], 2);
             if (dimensions.Length < 2 ||
                 !int.TryParse(dimensions[0], NumberStyles.None, CultureInfo.InvariantCulture, out int x) ||
                 x == 0 ||
@@ -469,11 +470,11 @@ namespace CbzToKf8
 
             var fragmentTagxEntries = new TagxBlock.Entry[]
             {
-                new TagxBlock.Entry() { TagId = 2, ValuesPerElement = 1, ValuesDescriptorByteMask = 0x01, EndOfValuesDescriptorByte = 0 },
-                new TagxBlock.Entry() { TagId = 3, ValuesPerElement = 1, ValuesDescriptorByteMask = 0x02, EndOfValuesDescriptorByte = 0 },
-                new TagxBlock.Entry() { TagId = 4, ValuesPerElement = 1, ValuesDescriptorByteMask = 0x04, EndOfValuesDescriptorByte = 0 },
-                new TagxBlock.Entry() { TagId = 6, ValuesPerElement = 2, ValuesDescriptorByteMask = 0x08, EndOfValuesDescriptorByte = 0 },
-                new TagxBlock.Entry() { TagId = 0, ValuesPerElement = 0, ValuesDescriptorByteMask = 0x00, EndOfValuesDescriptorByte = 1 },
+                new() { TagId = 2, ValuesPerElement = 1, ValuesDescriptorByteMask = 0x01, EndOfValuesDescriptorByte = 0 },
+                new() { TagId = 3, ValuesPerElement = 1, ValuesDescriptorByteMask = 0x02, EndOfValuesDescriptorByte = 0 },
+                new() { TagId = 4, ValuesPerElement = 1, ValuesDescriptorByteMask = 0x04, EndOfValuesDescriptorByte = 0 },
+                new() { TagId = 6, ValuesPerElement = 2, ValuesDescriptorByteMask = 0x08, EndOfValuesDescriptorByte = 0 },
+                new() { TagId = 0, ValuesPerElement = 0, ValuesDescriptorByteMask = 0x00, EndOfValuesDescriptorByte = 1 },
             };
 
             var fragmentIndxBuilder = new IndxBuilder(fragmentTagxEntries);
@@ -485,12 +486,12 @@ namespace CbzToKf8
 
                 foreach (var fragmentEntry in skeletonEntry.Fragments)
                 {
-                    fragmentIndxBuilder.AddEntry(fragmentEntry.OriginalTextIndex.ToStringInvariant("D10"), new[]
+                    fragmentIndxBuilder.AddEntry(fragmentEntry.OriginalTextIndex.ToStringInvariant("D10"), new IndxBuilder.Tag[]
                     {
-                        new IndxBuilder.Tag(2, new ulong[] { fragmentIndxBuilder.AddString(fragmentEntry.ParentPath) }),
-                        new IndxBuilder.Tag(3, new ulong[] { (ulong)skeletonIndex }),
-                        new IndxBuilder.Tag(4, new ulong[] { (ulong)fragmentIndex }),
-                        new IndxBuilder.Tag(6, new ulong[] { fragmentEntry.TextIndex, fragmentEntry.TextLength }),
+                        new(2, [fragmentIndxBuilder.AddString(fragmentEntry.ParentPath)]),
+                        new(3, [(ulong)skeletonIndex]),
+                        new(4, [(ulong)fragmentIndex]),
+                        new(6, [fragmentEntry.TextIndex, fragmentEntry.TextLength]),
                     });
 
                     fragmentIndex += 1;
@@ -505,9 +506,9 @@ namespace CbzToKf8
 
             var skeletonTagxEntries = new TagxBlock.Entry[]
             {
-                new TagxBlock.Entry() { TagId = 1, ValuesPerElement = 1, ValuesDescriptorByteMask = 0x03, EndOfValuesDescriptorByte = 0 },
-                new TagxBlock.Entry() { TagId = 6, ValuesPerElement = 2, ValuesDescriptorByteMask = 0x0C, EndOfValuesDescriptorByte = 0 },
-                new TagxBlock.Entry() { TagId = 0, ValuesPerElement = 0, ValuesDescriptorByteMask = 0x00, EndOfValuesDescriptorByte = 1 },
+                new() { TagId = 1, ValuesPerElement = 1, ValuesDescriptorByteMask = 0x03, EndOfValuesDescriptorByte = 0 },
+                new() { TagId = 6, ValuesPerElement = 2, ValuesDescriptorByteMask = 0x0C, EndOfValuesDescriptorByte = 0 },
+                new() { TagId = 0, ValuesPerElement = 0, ValuesDescriptorByteMask = 0x00, EndOfValuesDescriptorByte = 1 },
             };
 
             var skeletonIndxBuilder = new IndxBuilder(skeletonTagxEntries);
@@ -516,10 +517,10 @@ namespace CbzToKf8
             {
                 var skeletonEntry = skeletonEntries[skeletonIndex];
 
-                skeletonIndxBuilder.AddEntry("SKEL" + skeletonIndex.ToStringInvariant("D10"), new[]
+                skeletonIndxBuilder.AddEntry("SKEL" + skeletonIndex.ToStringInvariant("D10"), new IndxBuilder.Tag[]
                 {
-                    new IndxBuilder.Tag(1, new ulong[] { (ulong)skeletonEntry.Fragments.Count, (ulong)skeletonEntry.Fragments.Count }),
-                    new IndxBuilder.Tag(6, new ulong[] { skeletonEntry.TextIndex, skeletonEntry.TextLength, skeletonEntry.TextIndex, skeletonEntry.TextLength }),
+                    new(1, [(ulong)skeletonEntry.Fragments.Count, (ulong)skeletonEntry.Fragments.Count]),
+                    new(6, [skeletonEntry.TextIndex, skeletonEntry.TextLength, skeletonEntry.TextIndex, skeletonEntry.TextLength]),
                 });
             }
 
@@ -572,22 +573,22 @@ namespace CbzToKf8
             }
 
             var metadataXmlBuilder = new StringBuilder();
-            _ = metadataXmlBuilder.Append($@"<package version=""2.0"" xmlns=""http://www.idpf.org/2007/opf"" unique-identifier=""{Guid.NewGuid():B}"">");
-            _ = metadataXmlBuilder.Append($@"</package>");
-            _ = metadataXmlBuilder.Append($@"<metadata xmlns=""http://www.idpf.org/2007/opf"" xmlns:dc=""http://purl.org/dc/elements/1.1/"">");
-            _ = metadataXmlBuilder.Append($@"</metadata>");
-            _ = metadataXmlBuilder.Append($@"<spine xmlns=""http://www.idpf.org/2007/opf"">");
+            _ = metadataXmlBuilder.Append(Invariant($@"<package version=""2.0"" xmlns=""http://www.idpf.org/2007/opf"" unique-identifier=""{Guid.NewGuid():B}"">"));
+            _ = metadataXmlBuilder.Append(@"</package>");
+            _ = metadataXmlBuilder.Append(@"<metadata xmlns=""http://www.idpf.org/2007/opf"" xmlns:dc=""http://purl.org/dc/elements/1.1/"">");
+            _ = metadataXmlBuilder.Append(@"</metadata>");
+            _ = metadataXmlBuilder.Append(@"<spine xmlns=""http://www.idpf.org/2007/opf"">");
             for (int i = 0; i < pageInfos.Count; ++i)
             {
                 var pageInfo = pageInfos[i];
-                _ = metadataXmlBuilder.Append($@"<itemref idref=""{i}""");
+                _ = metadataXmlBuilder.Append(Invariant($@"<itemref idref=""{i}"""));
                 if (pageInfo.PageSide == PageSide.Left)
                     _ = metadataXmlBuilder.Append(@" properties=""page-spread-left""");
                 else if (pageInfo.PageSide == PageSide.Right)
                     _ = metadataXmlBuilder.Append(@" properties=""page-spread-right""");
-                _ = metadataXmlBuilder.Append($@" skelid=""{i}"" />");
+                _ = metadataXmlBuilder.Append(Invariant($@" skelid=""{i}"" />"));
             }
-            _ = metadataXmlBuilder.Append($@"</spine>");
+            _ = metadataXmlBuilder.Append(@"</spine>");
 
             var rescBuilder = new RescBuilder();
             rescBuilder.SetMetadata(metadataXmlBuilder.ToString());
@@ -630,7 +631,7 @@ namespace CbzToKf8
 
             // Add end-of-records.
 
-            records.Add(new Record(new MemoryStream(new byte[] { 0xE9, 0x8E, 0x0D, 0x0A })));
+            records.Add(new Record(new MemoryStream([0xE9, 0x8E, 0x0D, 0x0A])));
 
             // Build MOBI.
 
