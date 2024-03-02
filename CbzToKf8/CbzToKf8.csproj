@@ -5,9 +5,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>cbz-to-kf8</AssemblyName>
     
-    <LangVersion>9</LangVersion>
     <Features>strict</Features>
     <Nullable>enable</Nullable>
+    <WarningLevel>9999</WarningLevel>
 
     <AnalysisLevel>latest</AnalysisLevel>
     <AnalysisMode>Recommended</AnalysisMode>

@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
 
-    <LangVersion>9</LangVersion>
     <Features>strict</Features>
     <Nullable>enable</Nullable>
+    <WarningLevel>9999</WarningLevel>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
