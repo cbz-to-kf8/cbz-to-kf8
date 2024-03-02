@@ -11,8 +11,6 @@ trim_trailing_whitespace = true
 
 file_header_template = Copyright 2022 Carl Reinke\n\nThis file is part of a program that is licensed under the terms of the GNU\nAffero General Public License Version 3 as published by the Free Software\nFoundation.\n\nThis license does not grant rights under trademark law for use of any trade\nnames, trademarks, or service marks.
 
-dotnet_ignored_exceptions = System.NullReferenceException, System.StackOverflowException, CbzToKf8.UnreachableException
-
 dotnet_intransitive_exceptions = System.ArgumentException, System.IndexOutOfRangeException, System.InvalidCastException, System.InvalidOperationException, System.Collections.Generic.KeyNotFoundException, System.Threading.SynchronizationLockException, System.Threading.ThreadStateException
 
 #### .NET Coding Conventions ####
