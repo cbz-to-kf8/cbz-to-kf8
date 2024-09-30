@@ -285,6 +285,29 @@ namespace CbzToKf8
             if (pageInfos.Count == 0)
                 throw new InvalidDataException("No pages found.");
 
+            // Assign page sides.
+
+            var pageSide = firstPageSide != PageSide.Unspecified
+                ? firstPageSide
+                : direction == Direction.Ltr
+                    ? PageSide.Right
+                    : PageSide.Left;
+
+            foreach (var pageInfo in pageInfos)
+            {
+                if (pageInfo.ImageSplit != PageSide.Unspecified)
+                    pageSide = pageInfo.ImageSplit;
+
+                pageInfo.PageSide = pageSide;
+
+                if (pageSide == PageSide.Left)
+                    pageSide = PageSide.Right;
+                else if (pageSide == PageSide.Right)
+                    pageSide = PageSide.Left;
+                else
+                    throw new UnreachableException();
+            }
+
             // Determine "original" resolution.
 
             int originalWidth;
@@ -536,7 +559,14 @@ namespace CbzToKf8
             {
                 var pageInfo = pageInfos[i];
 
-                pageInfo.Name = $"page {i + 1}";
+                string pageSideName = pageInfo.PageSide switch
+                {
+                    PageSide.Left => "left",
+                    PageSide.Right => "right",
+                    _ => throw new UnreachableException(),
+                };
+
+                pageInfo.Name = $"page {i + 1} ({pageSideName})";
 
                 records.Add(new Record(pageInfo));
             }
@@ -555,22 +585,6 @@ namespace CbzToKf8
             }
 
             // Build metadata resource.
-
-            var side = firstPageSide != PageSide.Unspecified
-                ? firstPageSide
-                : direction == Direction.Ltr
-                    ? PageSide.Right
-                    : PageSide.Left;
-            foreach (var pageInfo in pageInfos)
-            {
-                if (pageInfo.ImageSplit != PageSide.Unspecified)
-                    side = pageInfo.ImageSplit;
-                pageInfo.PageSide = side;
-                if (side == PageSide.Left)
-                    side = PageSide.Right;
-                else if (side == PageSide.Right)
-                    side = PageSide.Left;
-            }
 
             var metadataXmlBuilder = new StringBuilder();
             _ = metadataXmlBuilder.Append(Invariant($@"<package version=""2.0"" xmlns=""http://www.idpf.org/2007/opf"" unique-identifier=""{Guid.NewGuid():B}"">"));
