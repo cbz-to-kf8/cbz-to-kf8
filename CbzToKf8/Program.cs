@@ -50,20 +50,67 @@ namespace CbzToKf8
         {
             var rootCommand = new RootCommand(GetExecutableName("cbz-to-kf8"));
 
-            var inputParameter = rootCommand.AddParameter("FILE", "A zip file containing images.");
+            var inputParameter = rootCommand.AddParameter(
+                name: "FILE",
+                description: "A zip file containing images.");
 
-            var outputOption = rootCommand.AddOption('o', "output", "FILE", "Write output to FILE.");
-            var asinOption = rootCommand.AddOption(null, "asin", "TEXT", "Set the ASIN of the book.");
-            var titleOption = rootCommand.AddOption(null, "title", "TEXT", "Set the title of the book.  Default is output filename.");
-            var authorOption = rootCommand.AddOption(null, "author", "TEXT", "Set the author of the book.");
-            var directionOption = rootCommand.AddOption<Direction>(null, "direction", "rtl|ltr", "Sets the reading direction to RTL (right-to-left) or LTR (left-to-right).  Default is RTL.", TryParseReadingDirection);
-            var noCoverOption = rootCommand.AddOption(null, "no-cover", "Process the first image as a page rather than as the book cover.");
-            var firstPageOption = rootCommand.AddOption<PageSide>(null, "first-page", "left|right", @"Designate the first page as a left or right page.  Default is left for RTL and right for LTR.", TryParsePageSide);
-            var deviceOption = rootCommand.AddOption<DeviceInfo>(null, "device", "ID", "Set default resolution setting by device." + GetDeviceList(), TryParseDeviceId);
-            var resolutionOption = rootCommand.AddOption<(int Width, int Height)>(null, "resolution", "WxH", "Resize images to fit inside the dimensions.", TryParseDimensions);
+            var outputOption = rootCommand.AddOption(
+                shortName: 'o',
+                longName: "output",
+                parameterName: "FILE",
+                description: "Write output to FILE.");
+            var asinOption = rootCommand.AddOption(
+                shortName: null,
+                longName: "asin",
+                parameterName: "TEXT",
+                description: "Set the ASIN of the book.");
+            var titleOption = rootCommand.AddOption(
+                shortName: null,
+                longName: "title",
+                parameterName: "TEXT",
+                description: "Set the title of the book.  Default is output filename.");
+            var authorOption = rootCommand.AddOption(
+                shortName: null,
+                longName: "author",
+                parameterName: "TEXT",
+                description: "Set the author of the book.");
+            var directionOption = rootCommand.AddOption<Direction>(
+                shortName: null,
+                longName: "direction",
+                parameterName: "rtl|ltr",
+                description: "Sets the reading direction to RTL (right-to-left) or LTR (left-to-right).  Default is RTL.",
+                parse: TryParseReadingDirection);
+            var noCoverOption = rootCommand.AddOption(
+                shortName: null,
+                longName: "no-cover",
+                description: "Process the first image as a page rather than as the book cover.");
+            var firstPageOption = rootCommand.AddOption<PageSide>(
+                shortName: null,
+                longName: "first-page",
+                parameterName: "left|right",
+                description: @"Designate the first page as a left or right page.  Default is left for RTL and right for LTR.",
+                parse: TryParsePageSide);
+            var deviceOption = rootCommand.AddOption<DeviceInfo>(
+                shortName: null,
+                longName: "device",
+                parameterName: "ID",
+                description: "Set default resolution setting by device." + GetDeviceList(),
+                parse: TryParseDeviceId);
+            var resolutionOption = rootCommand.AddOption<(int Width, int Height)>(
+                shortName: null,
+                longName: "resolution",
+                parameterName: "WxH",
+                description: "Resize images to fit inside the dimensions.",
+                parse: TryParseDimensions);
 
-            rootCommand.HelpOption = rootCommand.AddOption('h', "help", "Shows a usage summary.");
-            rootCommand.VerboseOption = rootCommand.AddOption('v', "verbose", "Enables additional output.");
+            rootCommand.HelpOption = rootCommand.AddOption(
+                shortName: 'h',
+                longName: "help",
+                description: "Shows a usage summary.");
+            rootCommand.VerboseOption = rootCommand.AddOption(
+                shortName: 'v',
+                longName: "verbose",
+                description: "Enables additional output.");
 
             rootCommand.SetInvokeHandler(() =>
             {
